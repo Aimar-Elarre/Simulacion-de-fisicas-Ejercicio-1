@@ -13,7 +13,7 @@ public class Planet : MonoBehaviour
     TerrainFace[] terrainFaces;
     [SerializeField]Material material;
 
-    private void OnValidate()
+    private void Start()
     {
         Initialize();
         GenerateMesh();
