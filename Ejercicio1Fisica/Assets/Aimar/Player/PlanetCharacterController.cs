@@ -7,6 +7,7 @@ public class PlanetCharacterController : MonoBehaviour
 {
     [Header("References")]
     public Transform planetCenter;
+    public Animator animations;
 
     [Header("Movement Settings")]
     public float moveSpeed = 6f;
@@ -112,7 +113,7 @@ public class PlanetCharacterController : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, planetCenter.position); //medir el radio
         float force = gravityMultiplier / (distance * distance); //dividir la fuerza por el radio a el cuadrado para simular la gravedad mas realista
-
+        Debug.Log(force + "FUERZA" + direction);
         rb.AddForce(direction * force, ForceMode.Acceleration); // Aplicar fuerza
 
         Vector3 down = (planetCenter.position - transform.position).normalized;
@@ -127,36 +128,26 @@ public class PlanetCharacterController : MonoBehaviour
 
     void HandleMovement()
     {
-        if (planetCenter == null) return;
-
         Vector3 down = (planetCenter.position - transform.position).normalized;
         Vector3 up = -down;
-
-        // Protección si Camera.main es null
-        if (Camera.main == null)
-        {
-            if (enableLogs) Debug.LogError("[PlanetController] Camera.main es null. Asegúrate de que la cámara principal tenga tag 'MainCamera'.");
-            return;
-        }
 
         Vector3 camForward = Vector3.ProjectOnPlane(Camera.main.transform.forward, up).normalized;
         Vector3 camRight = Vector3.ProjectOnPlane(Camera.main.transform.right, up).normalized;
 
-        Vector3 moveDir = (camForward * moveInput.y + camRight * moveInput.x);
+        Vector3 moveDir = camForward * moveInput.y + camRight * moveInput.x;
 
-        // Evitar NaNs
-        if (moveDir.sqrMagnitude > 1e-6f) moveDir = moveDir.normalized;
-        else moveDir = Vector3.zero;
-
-        controller.Move(moveDir * moveSpeed * Time.deltaTime);
+        rb.MovePosition(rb.position + moveDir * moveSpeed * Time.deltaTime);
 
         if (moveDir.sqrMagnitude > 0.01f)
         {
+            animations.SetBool("Move", true);
             Quaternion targetRot = Quaternion.LookRotation(moveDir, up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
         }
-
-        controller.Move(playerVelocity * Time.deltaTime);
+        else
+        {
+            animations.SetBool("Move", false);
+        }
     }
 
     //void TryJump()
