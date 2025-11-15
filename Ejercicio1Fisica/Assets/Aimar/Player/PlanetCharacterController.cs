@@ -1,7 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Rigidbody))]
 public class PlanetCharacterController : MonoBehaviour
 {
@@ -12,14 +12,13 @@ public class PlanetCharacterController : MonoBehaviour
     [Header("Movement Settings")]
     public float moveSpeed = 6f;
     public float rotationSpeed = 10f;
-    // float jumpForce = 8f;
+    public float jumpForce = 8f;
     public float gravityMultiplier = 25f;
-    public float groundCheckOffset = 0.2f;
+    public float groundCheckDistance = 1.2f;
 
     [Header("Debug")]
     public bool enableLogs = true;
 
-    private CharacterController controller;
     private PlayerControls input;
 
     private Vector2 moveInput;
@@ -31,8 +30,6 @@ public class PlanetCharacterController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false; // Desactivamos la gravedad global
-
-        controller = GetComponent<CharacterController>();
 
         // Crear la instancia del asset generado
         input = new PlayerControls();
@@ -53,11 +50,12 @@ public class PlanetCharacterController : MonoBehaviour
             Debug.LogError("[Input] Error habilitando input.Player. ¿El action map 'Player' existe? " + e.Message);
         }
 
-        //// Suscribir solo al salto (opcional) — también podríamos leer Jump con ReadValue si falla el performed
-        //input.Player.Jump.performed += ctx => {
-        //    if (enableLogs) Debug.Log("[Input] Jump.performed");
-        //    TryJump();
-        //};
+        // Suscribir solo al salto (opcional) — también podríamos leer Jump con ReadValue si falla el performed
+        input.Player.Jump.performed += ctx =>
+        {
+            if (enableLogs) Debug.Log("[Input] Jump.performed");
+            TryJump();
+        };
     }
 
     void OnDisable()
@@ -69,7 +67,7 @@ public class PlanetCharacterController : MonoBehaviour
         }
     }
 
-    void Update()
+    void FixedUpdate()
     {
         // Lectura por frame — esto es la forma fiable
         if (input == null)
@@ -99,6 +97,14 @@ public class PlanetCharacterController : MonoBehaviour
 
         HandleGravity();
         HandleMovement();
+        GroundCheck();
+        TryJump();
+    }
+    void GroundCheck()
+    {
+        Vector3 down = (planetCenter.position - transform.position).normalized;
+
+        isGrounded = Physics.Raycast(transform.position, down, groundCheckDistance);
     }
 
     void HandleGravity()
@@ -150,11 +156,17 @@ public class PlanetCharacterController : MonoBehaviour
         }
     }
 
-    //void TryJump()
-    //{
-    //    if (!isGrounded) return;
-    //    Vector3 up = (transform.position - planetCenter.position).normalized;
-    //    playerVelocity += up * jumpForce;
-    //}
+    void TryJump()
+    {
+        {
+            if (!isGrounded) return;
+            if (input.Player.Jump.ReadValue<float>() > 0.5f)
+            {
+                Vector3 up = (transform.position - planetCenter.position).normalized;
+
+                rb.AddForce(up * jumpForce, ForceMode.Impulse);
+            }            
+        }
+    }
 }
 

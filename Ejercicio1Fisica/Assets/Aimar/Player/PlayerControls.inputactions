@@ -16,7 +16,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Jump(por si se usa)",
+                    "name": "Jump",
                     "type": "Button",
                     "id": "e3800284-a7c7-41da-9469-0b48833ca44d",
                     "expectedControlType": "",
@@ -88,7 +88,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Jump(por si se usa)",
+                    "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -1774,7 +1774,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1943714284}
   - component: {fileID: 1943714283}
-  - component: {fileID: 1943714286}
   - component: {fileID: 1943714285}
   - component: {fileID: 1943714287}
   - component: {fileID: 1943714288}
@@ -1829,31 +1828,6 @@ MonoBehaviour:
   gravityMultiplier: 98
   groundCheckOffset: 0.2
   enableLogs: 1
---- !u!143 &1943714286
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1943714280}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!54 &1943714287
 Rigidbody:
   m_ObjectHideFlags: 0
